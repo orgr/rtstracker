@@ -1,15 +1,16 @@
 #![allow(clippy::missing_errors_doc)]
 #![allow(clippy::unnecessary_struct_initialization)]
 #![allow(clippy::unused_async)]
+use axum::debug_handler;
+use chrono::NaiveDate;
 use loco_rs::prelude::*;
 use serde::{Deserialize, Serialize};
-use axum::debug_handler;
 
 use crate::models::_entities::records::{ActiveModel, Entity, Model};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Params {
-    pub date: Option<Date>,
+    pub date: Option<NaiveDate>,
     pub project: Option<String>,
     pub task: Option<String>,
     pub time_charge: Option<String>,
@@ -17,19 +18,19 @@ pub struct Params {
     pub time: Option<i32>,
     pub mileage: Option<i32>,
     pub mileage_chargable: Option<bool>,
-    }
+}
 
 impl Params {
     fn update(&self, item: &mut ActiveModel) {
-      item.date = Set(self.date.clone());
-      item.project = Set(self.project.clone());
-      item.task = Set(self.task.clone());
-      item.time_charge = Set(self.time_charge.clone());
-      item.description = Set(self.description.clone());
-      item.time = Set(self.time.clone());
-      item.mileage = Set(self.mileage.clone());
-      item.mileage_chargable = Set(self.mileage_chargable.clone());
-      }
+        item.date = Set(self.date.clone());
+        item.project = Set(self.project.clone());
+        item.task = Set(self.task.clone());
+        item.time_charge = Set(self.time_charge.clone());
+        item.description = Set(self.description.clone());
+        item.time = Set(self.time.clone());
+        item.mileage = Set(self.mileage.clone());
+        item.mileage_chargable = Set(self.mileage_chargable.clone());
+    }
 }
 
 async fn load_item(ctx: &AppContext, id: i32) -> Result<Model> {
