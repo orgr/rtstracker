@@ -90,20 +90,20 @@ workers:
   mode: BackgroundQueue
 
 # Mailer Configuration.
-mailer:
-  # SMTP mailer configuration.
-  smtp:
-    # Enable/Disable smtp mailer.
-    enable: true
-    # SMTP server host. e.x localhost, smtp.gmail.com
-    host: {{ get_env(name="MAILER_HOST", default="localhost") }}
-    # SMTP server port
-    port: 1025
-    # Use secure connection (SSL/TLS).
-    secure: false
-    # auth:
-    #   user:
-    #   password:
+# mailer:
+#   # SMTP mailer configuration.
+#   smtp:
+#     # Enable/Disable smtp mailer.
+#     enable: true
+#     # SMTP server host. e.x localhost, smtp.gmail.com
+#     host: {{ get_env(name="MAILER_HOST", default="localhost") }}
+#     # SMTP server port
+#     port: 1025
+#     # Use secure connection (SSL/TLS).
+#     secure: false
+#     # auth:
+#     #   user:
+#     #   password:
 
 # Initializers Configuration
 # initializers:
@@ -134,11 +134,11 @@ database:
   dangerously_recreate: false
 
 # Queue Configuration
-queue:
-  # Redis connection URI
-  uri: {{get_env(name="REDIS_URL", default="redis://127.0.0.1")}}
-  # Dangerously flush all data in Redis on startup. dangerous operation, make sure that you using this flag only on dev environments or test mode
-  dangerously_flush: false
+# queue:
+#   # Redis connection URI
+#   uri: {{get_env(name="REDIS_URL", default="redis://127.0.0.1")}}
+#   # Dangerously flush all data in Redis on startup. dangerous operation, make sure that you using this flag only on dev environments or test mode
+#   dangerously_flush: false
 
 # Authentication Configuration
 auth:
