@@ -1,6 +1,6 @@
 use loco_rs::cli;
-use rtstracker::app::App;
 use migration::Migrator;
+use rtstracker::app::App;
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {

@@ -62,9 +62,7 @@ enum Records {
     Time,
     Mileage,
     MileageChargable,
-    
 }
-
 
 #[derive(DeriveIden)]
 enum Users {

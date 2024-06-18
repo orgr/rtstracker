@@ -28,7 +28,4 @@ enum Wmus {
     Table,
     Id,
     Description,
-    
 }
-
-
