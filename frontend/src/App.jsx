@@ -5,17 +5,25 @@ import Footer from './components/Footer';
 import LoginPage from './pages/LoginPage';
 import MainViewPage from './pages/MainViewPage';
 import DataEntryPage from './pages/DataEntryPage';
+import { AuthProvider } from './contexts/AuthContext';
+import PrivateRoute from './components/PrivateRoute';
 import './index.css';
 
 const App = () => {
   return (
     <Router>
       <Header />
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/main" element={<MainViewPage />} />
-        <Route path="/data-entry" element={<DataEntryPage />} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route exact path="/login" element={<LoginPage />} />
+          <Route exact path="/" element={<PrivateRoute />}>
+            <Route exact path="/" element={<MainViewPage />} />
+          </Route>
+          <Route exact path="/data-entry" element={<PrivateRoute />}>
+            <Route exact path="/data-entry" element={<DataEntryPage />} />
+          </Route>
+        </Routes>
+      </AuthProvider>
       <Footer />
     </Router>
   );
