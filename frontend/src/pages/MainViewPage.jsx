@@ -18,14 +18,7 @@ const MainViewPage = () => {
 
 
   const handleAddRow = () => {
-    const newRow = {
-      id: data.length + 1,
-      name: "",
-      email: "",
-      phone: "",
-      amount: 0.0,
-    }
-    setData([...data, newRow])
+    navigate('/data-entry');
   }
   const handleGenerateReport = () => {
     console.log("Generating report...")
@@ -38,20 +31,32 @@ const MainViewPage = () => {
     navigate('/login')
   }
 
-  if (isLoading) {
-    return (
-      <div className="flex flex-col h-screen mt-16">
-        Loading...
-      </div>
-    );
-  }
-  if (error) {
-    return (
-      <div className="flex flex-col h-screen mt-16">
-        Failed to load data
-      </div>
-    );
-  }
+  const renderTableBody = () => {
+    if (isLoading) {
+      return (
+        <TableRow>
+          <TableCell>Loading...</TableCell>
+        </TableRow >
+      );
+    }
+    if (error) {
+      return (
+        <TableRow>
+          Failed to load data
+        </TableRow >
+      );
+    }
+    return data.map((row) => (
+      <TableRow key={row.date}>
+        <TableCell>{row.date}</TableCell>
+        <TableCell>{row.user_id}</TableCell>
+        <TableCell>{row.wmu_id}</TableCell>
+        <TableCell>{row.project}</TableCell>
+        <TableCell>{row.task}</TableCell>
+        <TableCell>{row.time_charge}</TableCell>
+      </TableRow>
+    ));
+  };
 
   return (
     <div className="flex flex-col h-screen mt-16">
@@ -81,16 +86,7 @@ const MainViewPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((row) => (
-              <TableRow key={row.date}>
-                <TableCell>{row.date}</TableCell>
-                <TableCell>{row.user_id}</TableCell>
-                <TableCell>{row.wmu_id}</TableCell>
-                <TableCell>{row.project}</TableCell>
-                <TableCell>{row.task}</TableCell>
-                <TableCell>{row.time_charge}</TableCell>
-              </TableRow>
-            ))}
+            {renderTableBody()}
           </TableBody>
         </Table>
       </div>
