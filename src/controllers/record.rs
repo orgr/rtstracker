@@ -10,6 +10,8 @@ use crate::models::_entities::records::{ActiveModel, Entity, Model};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Params {
+    pub user_id: i32,
+    pub wmu_id: i32,
     pub date: Option<NaiveDate>,
     pub project: Option<String>,
     pub task: Option<String>,
@@ -22,6 +24,8 @@ pub struct Params {
 
 impl Params {
     fn update(&self, item: &mut ActiveModel) {
+        item.user_id = Set(self.user_id);
+        item.wmu_id = Set(self.wmu_id);
         item.date = Set(self.date.clone());
         item.project = Set(self.project.clone());
         item.task = Set(self.task.clone());

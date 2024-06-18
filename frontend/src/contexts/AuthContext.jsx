@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const AuthContext = React.createContext();
 
@@ -9,7 +10,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null); // You can use Firebase or another backend here
+  const [currentUser, setCurrentUser] = useState(Cookies.get('token') ? "previously_logged_in" : null); // You can use Firebase or another backend here
 
   const login = async (email, password) => {
     const response = await axios.post('api/auth/login', { 'email': email, 'password': password })
@@ -18,18 +19,17 @@ export const AuthProvider = ({ children }) => {
         throw error;
       });
     const { token, pid, name, is_verified } = response.data;
+    Cookies.set('token', token, { expires: 604800, secure: true, sameSite: 'Strict' });
     setCurrentUser({ email });
   };
 
   const logout = async () => {
-    // Implement your logout logic here (e.g., Firebase authentication)
-    // Example with Firebase:
-    // await firebase.auth().signOut();
+    Cookies.remove('token');
     setCurrentUser(null);
   };
 
   const isAuthenticated = () => {
-    return !!currentUser;
+    return !!currentUser
   };
 
   const value = {
