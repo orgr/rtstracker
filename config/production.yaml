@@ -138,4 +138,7 @@ auth:
     secret: {{get_env(name="JWT_SECRET")}}
     # Token expiration time in seconds
     expiration: 604800 # 7 days
+    location:
+      from: "Cookie"
+      name: "token"
 

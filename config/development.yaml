@@ -148,4 +148,7 @@ auth:
     secret: GjkvXW8zoMP5KknRt2Wb
     # Token expiration time in seconds
     expiration: 604800 # 7 days
+    location:
+      from: "Cookie"
+      name: "token"
 

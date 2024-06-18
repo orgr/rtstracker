@@ -1,47 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { fetcher } from '../utils/utils'
 import Button from "../components/ui/Button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "../components/ui/Table"
+import useSWR from 'swr'
 
 const MainViewPage = () => {
-  const [data, setData] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john@example.com",
-      phone: "555-1234",
-      amount: 100.0,
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane@example.com",
-      phone: "555-5678",
-      amount: 75.5,
-    },
-    {
-      id: 3,
-      name: "Bob Johnson",
-      email: "bob@example.com",
-      phone: "555-9012",
-      amount: 150.25,
-    },
-    {
-      id: 4,
-      name: "Alice Williams",
-      email: "alice@example.com",
-      phone: "555-3456",
-      amount: 80.75,
-    },
-    {
-      id: 5,
-      name: "Tom Davis",
-      email: "tom@example.com",
-      phone: "555-7890",
-      amount: 120.0,
-    },
-  ])
+  const { data, error, isLoading } = useSWR('api/records', fetcher, {
+    onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+      if (retryCount >= 10) {
+        return;
+      }
+      setTimeout(() => revalidate({ retryCount }), 5000);
+    }
+  });
+
+
   const handleAddRow = () => {
     const newRow = {
       id: data.length + 1,
@@ -63,6 +38,21 @@ const MainViewPage = () => {
     navigate('/login')
   }
 
+  if (isLoading) {
+    return (
+      <div className="flex flex-col h-screen mt-16">
+        Loading...
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="flex flex-col h-screen mt-16">
+        Failed to load data
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-screen mt-16">
       <header className="bg-gray-100 dark:bg-gray-800 py-4 px-6">
@@ -79,21 +69,26 @@ const MainViewPage = () => {
         <Table className="w-full">
           <TableHeader>
             <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Amount</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Manager</TableHead>
+              <TableHead>WMU</TableHead>
+              <TableHead>Project</TableHead>
+              <TableHead>Task</TableHead>
+              <TableHead>Time Charge</TableHead>
+              <TableHead>Time</TableHead>
+              <TableHead>Mileage</TableHead>
+              <TableHead>Mileage Chargable</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.id}</TableCell>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.email}</TableCell>
-                <TableCell>{row.phone}</TableCell>
-                <TableCell>${row.amount.toFixed(2)}</TableCell>
+              <TableRow key={row.date}>
+                <TableCell>{row.date}</TableCell>
+                <TableCell>{row.user_id}</TableCell>
+                <TableCell>{row.wmu_id}</TableCell>
+                <TableCell>{row.project}</TableCell>
+                <TableCell>{row.task}</TableCell>
+                <TableCell>{row.time_charge}</TableCell>
               </TableRow>
             ))}
           </TableBody>

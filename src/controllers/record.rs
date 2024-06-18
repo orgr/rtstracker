@@ -43,7 +43,7 @@ async fn load_item(ctx: &AppContext, id: i32) -> Result<Model> {
 }
 
 #[debug_handler]
-pub async fn list(State(ctx): State<AppContext>) -> Result<Response> {
+pub async fn list(_auth: auth::JWT, State(ctx): State<AppContext>) -> Result<Response> {
     format::json(Entity::find().all(&ctx.db).await?)
 }
 
