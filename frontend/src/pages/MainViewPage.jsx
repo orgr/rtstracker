@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import Button from "../components/ui/Button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "../components/ui/Table"
 
@@ -53,14 +55,23 @@ const MainViewPage = () => {
   const handleGenerateReport = () => {
     console.log("Generating report...")
   }
+
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login')
+  }
+
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-screen mt-16">
       <header className="bg-gray-100 dark:bg-gray-800 py-4 px-6">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Data Table</h1>
           <div className="flex gap-4">
             <Button onClick={handleAddRow}>Add Row</Button>
             <Button onClick={handleGenerateReport}>Generate Report</Button>
+            <Button onClick={handleLogout}>Log out</Button>
           </div>
         </div>
       </header>
