@@ -12,11 +12,12 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null); // You can use Firebase or another backend here
 
   const login = async (email, password) => {
-    const { status, data } = await axios.post('api/auth/login', { 'email': email, 'password': password })
+    const response = await axios.post('api/auth/login', { 'email': email, 'password': password })
       .catch((error) => {
         console.log(error);
         throw error;
       });
+    const { token, pid, name, is_verified } = response.data;
     setCurrentUser({ email });
   };
 
