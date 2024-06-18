@@ -1,5 +1,7 @@
 import React, { useContext, useState } from 'react';
 
+import axios from 'axios';
+
 const AuthContext = React.createContext();
 
 export const useAuth = () => {
@@ -10,10 +12,12 @@ export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null); // You can use Firebase or another backend here
 
   const login = async (email, password) => {
-    // Implement your login logic here (e.g., Firebase authentication)
-    // Example with Firebase:
-    // await firebase.auth().signInWithEmailAndPassword(email, password);
-    setCurrentUser({ email }); // Mock user for demonstration
+    const { status, data } = await axios.post('api/auth/login', { 'email': email, 'password': password })
+      .catch((error) => {
+        console.log(error);
+        throw error;
+      });
+    setCurrentUser({ email });
   };
 
   const logout = async () => {
