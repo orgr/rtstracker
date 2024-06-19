@@ -6,6 +6,7 @@
 debug/
 target/
 
+frontend/dist
 # include cargo lock
 !Cargo.lock
 

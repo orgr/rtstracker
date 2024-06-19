@@ -1,33 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 import { fetcher } from '../utils/utils'
-import Button from "../components/ui/Button"
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "../components/ui/Table"
+import Button from '../components/ui/Button'
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table'
 import useSWR from 'swr'
 
 const MainViewPage = () => {
   const { data, error, isLoading } = useSWR('api/records', fetcher, {
     onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
       if (retryCount >= 10) {
-        return;
+        return
       }
-      setTimeout(() => revalidate({ retryCount }), 5000);
+      setTimeout(() => revalidate({ retryCount }), 5000)
     }
-  });
-
+  })
 
   const handleAddRow = () => {
-    navigate('/data-entry');
+    navigate('/data-entry')
   }
   const handleGenerateReport = () => {
-    console.log("Generating report...")
+    console.log('Generating report...')
   }
 
-  const navigate = useNavigate();
-  const { logout } = useAuth();
+  const navigate = useNavigate()
+  const { logout } = useAuth()
   const handleLogout = async () => {
-    await logout();
+    await logout()
     navigate('/login')
   }
 
@@ -36,15 +34,15 @@ const MainViewPage = () => {
       return (
         <TableRow>
           <TableCell>Loading...</TableCell>
-        </TableRow >
-      );
+        </TableRow>
+      )
     }
     if (error) {
       return (
         <TableRow>
           Failed to load data
-        </TableRow >
-      );
+        </TableRow>
+      )
     }
     return data.map((row) => (
       <TableRow key={row.date}>
@@ -55,23 +53,23 @@ const MainViewPage = () => {
         <TableCell>{row.task}</TableCell>
         <TableCell>{row.time_charge}</TableCell>
       </TableRow>
-    ));
-  };
+    ))
+  }
 
   return (
-    <div className="flex flex-col h-screen mt-16">
-      <header className="bg-gray-100 dark:bg-gray-800 py-4 px-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Data Table</h1>
-          <div className="flex gap-4">
+    <div className='flex flex-col h-screen mt-16'>
+      <header className='bg-gray-100 dark:bg-gray-800 py-4 px-6'>
+        <div className='flex justify-between items-center'>
+          <h1 className='text-2xl font-bold'>Data Table</h1>
+          <div className='flex gap-4'>
             <Button onClick={handleAddRow}>Add Row</Button>
             <Button onClick={handleGenerateReport}>Generate Report</Button>
             <Button onClick={handleLogout}>Log out</Button>
           </div>
         </div>
       </header>
-      <div className="flex-1 overflow-auto">
-        <Table className="w-full">
+      <div className='flex-1 overflow-auto'>
+        <Table className='w-full'>
           <TableHeader>
             <TableRow>
               <TableHead>Date</TableHead>
@@ -94,7 +92,4 @@ const MainViewPage = () => {
   )
 }
 
-
-export default MainViewPage;
-
-
+export default MainViewPage
