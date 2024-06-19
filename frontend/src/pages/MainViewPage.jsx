@@ -44,6 +44,14 @@ const MainViewPage = () => {
         </TableRow>
       )
     }
+    if (data.length === 0) {
+      return (
+        <TableRow>
+          Nothing to show
+        </TableRow>
+      )
+    }
+
     return data.map((row) => (
       <TableRow key={row.date}>
         <TableCell>{row.date}</TableCell>

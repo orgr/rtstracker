@@ -4,22 +4,26 @@
 use axum::debug_handler;
 use chrono::NaiveDate;
 use loco_rs::prelude::*;
+use sea_orm::LoaderTrait;
 use serde::{Deserialize, Serialize};
 
 use crate::models::_entities::records::{ActiveModel, Entity, Model};
+use crate::models::_entities::users;
+use crate::models::_entities::wmus;
+use crate::views::record::{ListResponse, RecordResponse};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Params {
     pub user_id: i32,
     pub wmu_id: i32,
-    pub date: Option<NaiveDate>,
-    pub project: Option<String>,
-    pub task: Option<String>,
-    pub time_charge: Option<String>,
+    pub date: NaiveDate,
+    pub project: String,
+    pub task: String,
+    pub time_charge: String,
     pub description: Option<String>,
-    pub time: Option<i32>,
-    pub mileage: Option<i32>,
-    pub mileage_chargable: Option<bool>,
+    pub time: i32,
+    pub mileage: i32,
+    pub mileage_chargable: bool,
 }
 
 impl Params {
@@ -44,7 +48,30 @@ async fn load_item(ctx: &AppContext, id: i32) -> Result<Model> {
 
 #[debug_handler]
 pub async fn list(_auth: auth::JWT, State(ctx): State<AppContext>) -> Result<Response> {
-    format::json(Entity::find().all(&ctx.db).await?)
+    let raw_records: Vec<Model> = Entity::find().all(&ctx.db).await?;
+    let users: Vec<Option<users::Model>> = raw_records.load_one(users::Entity, &ctx.db).await?;
+    let wmus: Vec<Option<wmus::Model>> = raw_records.load_one(wmus::Entity, &ctx.db).await?;
+    let records: Vec<RecordResponse> = raw_records
+        .iter()
+        .enumerate()
+        .map(|(i, raw_record)| {
+            let user = users[i].as_ref().unwrap();
+            let wmu = wmus[i].as_ref().unwrap();
+            RecordResponse {
+                manager: user.name.clone(),
+                wmu: wmu.id.to_string(),
+                date: raw_record.date,
+                project: raw_record.project.clone(),
+                task: raw_record.task.clone(),
+                time_charge: raw_record.time_charge.to_string(),
+                description: raw_record.description.as_ref().unwrap().to_string(),
+                time: raw_record.time,
+                mileage: raw_record.mileage,
+                mileage_chargable: raw_record.mileage_chargable,
+            }
+        })
+        .collect();
+    format::json(ListResponse::new(records))
 }
 
 #[debug_handler]

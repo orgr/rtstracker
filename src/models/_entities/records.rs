@@ -10,17 +10,17 @@ pub struct Model {
     pub updated_at: DateTime,
     #[sea_orm(primary_key)]
     pub id: i32,
-    pub date: Option<Date>,
+    pub date: Date,
     pub user_id: i32,
     pub wmu_id: i32,
-    pub project: Option<String>,
-    pub task: Option<String>,
-    pub time_charge: Option<String>,
+    pub project: String,
+    pub task: String,
+    pub time_charge: String,
     #[sea_orm(column_type = "Text", nullable)]
     pub description: Option<String>,
-    pub time: Option<i32>,
-    pub mileage: Option<i32>,
-    pub mileage_chargable: Option<bool>,
+    pub time: i32,
+    pub mileage: i32,
+    pub mileage_chargable: bool,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
