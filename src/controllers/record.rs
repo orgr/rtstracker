@@ -26,14 +26,14 @@ impl Params {
     fn update(&self, item: &mut ActiveModel) {
         item.user_id = Set(self.user_id);
         item.wmu_id = Set(self.wmu_id);
-        item.date = Set(self.date.clone());
+        item.date = Set(self.date);
         item.project = Set(self.project.clone());
         item.task = Set(self.task.clone());
         item.time_charge = Set(self.time_charge.clone());
         item.description = Set(self.description.clone());
-        item.time = Set(self.time.clone());
-        item.mileage = Set(self.mileage.clone());
-        item.mileage_chargable = Set(self.mileage_chargable.clone());
+        item.time = Set(self.time);
+        item.mileage = Set(self.mileage);
+        item.mileage_chargable = Set(self.mileage_chargable);
     }
 }
 
