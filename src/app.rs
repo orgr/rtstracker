@@ -16,7 +16,7 @@ use sea_orm::DatabaseConnection;
 
 use crate::{
     controllers, initializers,
-    models::_entities::{notes, users},
+    models::_entities::{notes, records, users, wmus},
     tasks,
     workers::downloader::DownloadWorker,
 };
@@ -67,6 +67,8 @@ impl Hooks for App {
 
     async fn truncate(db: &DatabaseConnection) -> Result<()> {
         truncate_table(db, users::Entity).await?;
+        truncate_table(db, records::Entity).await?;
+        truncate_table(db, wmus::Entity).await?;
         truncate_table(db, notes::Entity).await?;
         Ok(())
     }

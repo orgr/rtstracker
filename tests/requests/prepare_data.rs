@@ -55,3 +55,13 @@ pub fn auth_header(token: &str) -> (HeaderName, HeaderValue) {
 
     (HeaderName::from_static("authorization"), auth_header_value)
 }
+
+pub async fn init_wmu(request: &TestServer, _ctx: &AppContext) -> serde_json::Value {
+    let payload = serde_json::json!({
+        "description": None::<String>,
+    });
+
+    //Creating a new wmu
+    let response = request.post("/api/wmus").json(&payload).await;
+    serde_json::from_str(&response.text()).unwrap()
+}

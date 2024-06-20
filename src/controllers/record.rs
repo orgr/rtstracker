@@ -75,7 +75,11 @@ pub async fn list(_auth: auth::JWT, State(ctx): State<AppContext>) -> Result<Res
 }
 
 #[debug_handler]
-pub async fn add(State(ctx): State<AppContext>, Json(params): Json<Params>) -> Result<Response> {
+pub async fn add(
+    _auth: auth::JWT,
+    State(ctx): State<AppContext>,
+    Json(params): Json<Params>,
+) -> Result<Response> {
     let mut item = ActiveModel {
         ..Default::default()
     };
