@@ -10,7 +10,7 @@ export const useAuth = () => {
 }
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(Cookies.get('token') ? 'previously_logged_in' : null) // You can use Firebase or another backend here
+  const [currentUser, setCurrentUser] = useState(Cookies.get('user_pid'))
 
   const login = async (email, password) => {
     const response = await axios.post('api/auth/login', { email, password })
@@ -18,13 +18,15 @@ export const AuthProvider = ({ children }) => {
         console.log(error)
         throw error
       })
-    const { token } = response.data
+    const { token, pid } = response.data
     Cookies.set('token', token, { expires: 604800, secure: true, sameSite: 'Strict' })
-    setCurrentUser({ email })
+    Cookies.set('user_pid', pid, { expires: 604800, secure: true, sameSite: 'Strict' })
+    setCurrentUser({ pid })
   }
 
   const logout = async () => {
     Cookies.remove('token')
+    Cookies.remove('user_pid')
     setCurrentUser(null)
   }
 

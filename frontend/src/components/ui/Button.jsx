@@ -1,10 +1,10 @@
 import React from 'react'
-
+import { Button as MantineButton } from '@mantine/core'
 const Button = ({ className, children, ...props }) => {
   return (
-    <button className={`btn ${className}`} {...props}>
+    <MantineButton className={`btn ${className}`} {...props}>
       {children}
-    </button>
+    </MantineButton>
   )
 }
 

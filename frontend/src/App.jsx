@@ -8,24 +8,33 @@ import DataEntryPage from './pages/DataEntryPage'
 import { AuthProvider } from './contexts/AuthContext'
 import PrivateRoute from './components/PrivateRoute'
 import './index.css'
+import '@mantine/core/styles.css'
+import '@mantine/dates/styles.css'
+
+import { MantineProvider } from '@mantine/core'
+import { ModalsProvider } from '@mantine/modals'
 
 const App = () => {
   return (
-    <Router>
-      <Header />
+    <MantineProvider>
       <AuthProvider>
-        <Routes>
-          <Route exact path='/login' element={<LoginPage />} />
-          <Route exact path='/' element={<PrivateRoute />}>
-            <Route exact path='/' element={<MainViewPage />} />
-          </Route>
-          <Route exact path='/data-entry' element={<PrivateRoute />}>
-            <Route exact path='/data-entry' element={<DataEntryPage />} />
-          </Route>
-        </Routes>
+        <ModalsProvider>
+          <Router>
+            <Header />
+            <Routes>
+              <Route exact path='/login' element={<LoginPage />} />
+              <Route exact path='/' element={<PrivateRoute />}>
+                <Route exact path='/' element={<MainViewPage />} />
+              </Route>
+              <Route exact path='/data-entry' element={<PrivateRoute />}>
+                <Route exact path='/data-entry' element={<DataEntryPage />} />
+              </Route>
+            </Routes>
+            <Footer />
+          </Router>
+        </ModalsProvider>
       </AuthProvider>
-      <Footer />
-    </Router>
+    </MantineProvider>
   )
 }
 

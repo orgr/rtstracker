@@ -2,11 +2,13 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { fetcher } from '../utils/utils'
 import Button from '../components/ui/Button'
+import NewRecordForm from '../components/NewRecordForm'
+import { modals } from '@mantine/modals'
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table'
 import useSWR from 'swr'
 
 const MainViewPage = () => {
-  const { data, error, isLoading } = useSWR('api/records', fetcher, {
+  const { data, error, isLoading, mutate } = useSWR('api/records', fetcher, {
     onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
       if (retryCount >= 10) {
         return
@@ -16,7 +18,14 @@ const MainViewPage = () => {
   })
 
   const handleAddRow = () => {
-    navigate('/data-entry')
+    modals.open({
+      title: 'New Record',
+      children: (
+        <NewRecordForm />
+      ),
+      onClose: () => { mutate() }
+    })
+    return null
   }
   const handleGenerateReport = () => {
     console.log('Generating report...')
@@ -40,20 +49,20 @@ const MainViewPage = () => {
     if (error) {
       return (
         <TableRow>
-          Failed to load data
+          <TableCell>Failed to load data</TableCell>
         </TableRow>
       )
     }
     if (data.length === 0) {
       return (
         <TableRow>
-          Nothing to show
+          <TableCell>Nothing to show</TableCell>
         </TableRow>
       )
     }
 
     return data.map((row) => (
-      <TableRow key={row.date}>
+      <TableRow>
         <TableCell>{row.date}</TableCell>
         <TableCell>{row.user_id}</TableCell>
         <TableCell>{row.wmu_id}</TableCell>
@@ -70,9 +79,9 @@ const MainViewPage = () => {
         <div className='flex justify-between items-center'>
           <h1 className='text-2xl font-bold'>Data Table</h1>
           <div className='flex gap-4'>
-            <Button onClick={handleAddRow}>Add Row</Button>
+            <Button onClick={handleAddRow}>New Record</Button>
             <Button onClick={handleGenerateReport}>Generate Report</Button>
-            <Button onClick={handleLogout}>Log out</Button>
+            <Button variant='subtle' onClick={handleLogout}>Log out</Button>
           </div>
         </div>
       </header>

@@ -41,6 +41,20 @@ impl Params {
     }
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct AddWithUserPidParams {
+    pub user_pid: String,
+    pub wmu_id: i32,
+    pub date: NaiveDate,
+    pub project: String,
+    pub task: String,
+    pub time_charge: String,
+    pub description: Option<String>,
+    pub time: i32,
+    pub mileage: i32,
+    pub mileage_chargable: bool,
+}
+
 async fn load_item(ctx: &AppContext, id: i32) -> Result<Model> {
     let item = Entity::find_by_id(id).one(&ctx.db).await?;
     item.ok_or_else(|| Error::NotFound)
@@ -78,10 +92,23 @@ pub async fn list(_auth: auth::JWT, State(ctx): State<AppContext>) -> Result<Res
 pub async fn add(
     _auth: auth::JWT,
     State(ctx): State<AppContext>,
-    Json(params): Json<Params>,
+    Json(params_user_pid): Json<AddWithUserPidParams>,
 ) -> Result<Response> {
+    let user = users::Model::find_by_pid(&ctx.db, &params_user_pid.user_pid).await?;
     let mut item = ActiveModel {
         ..Default::default()
+    };
+    let params = Params {
+        user_id: user.id,
+        wmu_id: params_user_pid.wmu_id,
+        date: params_user_pid.date,
+        project: params_user_pid.project,
+        task: params_user_pid.task,
+        time_charge: params_user_pid.time_charge,
+        description: params_user_pid.description,
+        time: params_user_pid.time,
+        mileage: params_user_pid.mileage,
+        mileage_chargable: params_user_pid.mileage_chargable,
     };
     params.update(&mut item);
     let item = item.insert(&ctx.db).await?;
