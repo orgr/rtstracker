@@ -64,11 +64,15 @@ const MainViewPage = () => {
     return data.map((row) => (
       <TableRow>
         <TableCell>{row.date}</TableCell>
-        <TableCell>{row.user_id}</TableCell>
-        <TableCell>{row.wmu_id}</TableCell>
+        <TableCell>{row.manager}</TableCell>
+        <TableCell>{row.wmu}</TableCell>
         <TableCell>{row.project}</TableCell>
         <TableCell>{row.task}</TableCell>
+        <TableCell>{row.time}</TableCell>
         <TableCell>{row.time_charge}</TableCell>
+        <TableCell>{row.mileage}</TableCell>
+        <TableCell>{row.mileage_chargable}</TableCell>
+        <TableCell>{row.description}</TableCell>
       </TableRow>
     ))
   }
@@ -98,6 +102,7 @@ const MainViewPage = () => {
               <TableHead>Time</TableHead>
               <TableHead>Mileage</TableHead>
               <TableHead>Mileage Chargable</TableHead>
+              <TableHead>Description</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
