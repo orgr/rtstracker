@@ -6,6 +6,7 @@ import Card, { CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import Label from '../components/ui/Label'
 import Input from '../components/ui/Input'
 import Button from '../components/ui/Button'
+import { notifyError } from '../utils/utils'
 
 const LoginPage = () => {
   const navigate = useNavigate()
@@ -13,7 +14,6 @@ const LoginPage = () => {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -21,7 +21,7 @@ const LoginPage = () => {
       await login(email, password)
       navigate('/') // Redirect to main page after successful login
     } catch (error) {
-      setError('Failed to log in')
+      notifyError(error)
     }
   }
 

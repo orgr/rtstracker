@@ -6,6 +6,8 @@ import axios from 'axios'
 import { useAuth } from '../contexts/AuthContext'
 import { modals } from '@mantine/modals'
 
+import { notifyError } from '../utils/utils'
+
 const NewRecordForm = ({ className, children, ...props }) => {
   const form = useForm({
     mode: 'uncontrolled',
@@ -38,6 +40,7 @@ const NewRecordForm = ({ className, children, ...props }) => {
   const handleSubmit = async (values) => {
     await axios.post('api/records', {
       user_pid: currentUser,
+      // TODO: remove hardcoded value
       wmu_id: 1,
       // clean the time from the datetime value
       date: values.date.toJSON().split('T')[0],
@@ -50,7 +53,7 @@ const NewRecordForm = ({ className, children, ...props }) => {
       mileage_chargable: values.mileage_chargable
     }).catch((error) => {
       console.log(error)
-      throw error
+      notifyError(error)
     })
     modals.closeAll()
   }
