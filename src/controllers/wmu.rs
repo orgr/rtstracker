@@ -9,6 +9,7 @@ use crate::models::_entities::wmus::{ActiveModel, Entity, Model};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Params {
+    pub name: String,
     pub description: Option<String>,
 }
 

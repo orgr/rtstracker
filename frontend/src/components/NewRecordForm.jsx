@@ -1,5 +1,5 @@
 import Button from './ui/Button'
-import DynamicAutocomplete from './ui/DynamicAutocomplete'
+import SearchableSelectAsync from './ui/SearchableSelectAsync'
 import { Autocomplete, Checkbox, NumberInput, Group, Textarea, Select } from '@mantine/core'
 import { DatePickerInput } from '@mantine/dates'
 import { useForm } from '@mantine/form'
@@ -81,7 +81,7 @@ const NewRecordForm = ({ className, children, ...props }) => {
         {...form.getInputProps('wmu')}
       />
 
-      <DynamicAutocomplete
+      <SearchableSelectAsync
         withAsterisk
         mt='md'
         label='Project'
@@ -91,7 +91,7 @@ const NewRecordForm = ({ className, children, ...props }) => {
         {...form.getInputProps('project')}
       />
 
-      <DynamicAutocomplete
+      <SearchableSelectAsync
         withAsterisk
         mt='md'
         label='Task'

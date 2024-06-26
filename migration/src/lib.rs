@@ -8,6 +8,7 @@ mod m20231103_114510_notes;
 mod m20240617_070915_wmus;
 mod m20240617_070956_records;
 mod m20240619_171005_alter_records;
+mod m20240626_221043_extend_wmus;
 pub struct Migrator;
 
 #[async_trait::async_trait]
@@ -19,6 +20,7 @@ impl MigratorTrait for Migrator {
             Box::new(m20240617_070915_wmus::Migration),
             Box::new(m20240617_070956_records::Migration),
             Box::new(m20240619_171005_alter_records::Migration),
+            Box::new(m20240626_221043_extend_wmus::Migration),
         ]
     }
 }
