@@ -4,6 +4,7 @@ use chrono::NaiveDate;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct RecordResponse {
+    pub id: i32,
     pub manager: String,
     pub wmu: String,
     pub date: NaiveDate,

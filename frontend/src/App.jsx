@@ -10,12 +10,12 @@ import PrivateRoute from './components/PrivateRoute'
 
 import { MantineProvider } from '@mantine/core'
 import { ModalsProvider } from '@mantine/modals'
-import { Notifications } from '@mantine/notifications';
+import { Notifications } from '@mantine/notifications'
 
 import './index.css'
 import '@mantine/core/styles.css'
 import '@mantine/dates/styles.css'
-import '@mantine/notifications/styles.css';
+import '@mantine/notifications/styles.css'
 
 const App = () => {
   return (

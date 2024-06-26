@@ -5,11 +5,13 @@ use axum::debug_handler;
 use chrono::NaiveDate;
 use loco_rs::prelude::*;
 use sea_orm::LoaderTrait;
+use sea_orm::QuerySelect;
 use serde::{Deserialize, Serialize};
 
-use crate::models::_entities::records::{ActiveModel, Entity, Model};
+use crate::models::_entities::records::{ActiveModel, Column, Entity, Model};
 use crate::models::_entities::users;
 use crate::models::_entities::wmus;
+use crate::models::records::AddWithUserPidParams;
 use crate::views::record::{ListResponse, RecordResponse};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -41,20 +43,6 @@ impl Params {
     }
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct AddWithUserPidParams {
-    pub user_pid: String,
-    pub wmu_id: i32,
-    pub date: NaiveDate,
-    pub project: String,
-    pub task: String,
-    pub time_charge: String,
-    pub description: Option<String>,
-    pub time: i32,
-    pub mileage: i32,
-    pub mileage_chargable: bool,
-}
-
 async fn load_item(ctx: &AppContext, id: i32) -> Result<Model> {
     let item = Entity::find_by_id(id).one(&ctx.db).await?;
     item.ok_or_else(|| Error::NotFound)
@@ -72,6 +60,7 @@ pub async fn list(_auth: auth::JWT, State(ctx): State<AppContext>) -> Result<Res
             let user = users[i].as_ref().unwrap();
             let wmu = wmus[i].as_ref().unwrap();
             RecordResponse {
+                id: raw_record.id,
                 manager: user.name.clone(),
                 wmu: wmu.id.to_string(),
                 date: raw_record.date,
@@ -86,6 +75,30 @@ pub async fn list(_auth: auth::JWT, State(ctx): State<AppContext>) -> Result<Res
         })
         .collect();
     format::json(ListResponse::new(records))
+}
+
+#[debug_handler]
+pub async fn list_projects(_auth: auth::JWT, State(ctx): State<AppContext>) -> Result<Response> {
+    let projects: Vec<String> = Entity::find()
+        .select_only()
+        .column(Column::Project)
+        .distinct()
+        .into_tuple()
+        .all(&ctx.db)
+        .await?;
+    format::json(projects)
+}
+
+#[debug_handler]
+pub async fn list_tasks(_auth: auth::JWT, State(ctx): State<AppContext>) -> Result<Response> {
+    let tasks: Vec<String> = Entity::find()
+        .select_only()
+        .column(Column::Task)
+        .distinct()
+        .into_tuple()
+        .all(&ctx.db)
+        .await?;
+    format::json(tasks)
 }
 
 #[debug_handler]
@@ -143,6 +156,8 @@ pub fn routes() -> Routes {
     Routes::new()
         .prefix("api/records")
         .add("/", get(list))
+        .add("/projects", get(list_projects))
+        .add("/tasks", get(list_tasks))
         .add("/", post(add))
         .add("/:id", get(get_one))
         .add("/:id", delete(remove))

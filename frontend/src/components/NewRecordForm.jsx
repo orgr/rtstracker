@@ -1,10 +1,10 @@
 import Button from './ui/Button'
+import DynamicAutocomplete from './ui/DynamicAutocomplete'
 import { Autocomplete, Checkbox, NumberInput, Group, Textarea, Select } from '@mantine/core'
 import { DatePickerInput } from '@mantine/dates'
 import { useForm } from '@mantine/form'
 import axios from 'axios'
 import { useAuth } from '../contexts/AuthContext'
-import { modals } from '@mantine/modals'
 
 import { notifyError } from '../utils/utils'
 
@@ -55,7 +55,9 @@ const NewRecordForm = ({ className, children, ...props }) => {
       console.log(error)
       notifyError(error)
     })
-    modals.closeAll()
+    if (props.onSubmitExtra) {
+      props.onSubmitExtra()
+    }
   }
 
   return (
@@ -79,22 +81,22 @@ const NewRecordForm = ({ className, children, ...props }) => {
         {...form.getInputProps('wmu')}
       />
 
-      <Autocomplete
+      <DynamicAutocomplete
         withAsterisk
         mt='md'
         label='Project'
         placeholder=''
-        data={['React', 'Angular', 'Vue', 'Svelte']}
+        dataSource='api/records/projects'
         key={form.key('project')}
         {...form.getInputProps('project')}
       />
 
-      <Autocomplete
+      <DynamicAutocomplete
         withAsterisk
         mt='md'
         label='Task'
         placeholder=''
-        data={['React', 'Angular', 'Vue', 'Svelte']}
+        dataSource='api/records/tasks'
         key={form.key('task')}
         {...form.getInputProps('task')}
       />

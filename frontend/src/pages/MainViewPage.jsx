@@ -4,6 +4,7 @@ import { fetcher } from '../utils/utils'
 import Button from '../components/ui/Button'
 import NewRecordForm from '../components/NewRecordForm'
 import { modals } from '@mantine/modals'
+import { Badge } from '@mantine/core'
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table'
 import useSWR from 'swr'
 
@@ -17,16 +18,21 @@ const MainViewPage = () => {
     }
   })
 
+  const closeModal = () => {
+    modals.closeAll()
+  }
+
   const handleAddRow = () => {
     modals.open({
       title: 'New Record',
       children: (
-        <NewRecordForm />
+        <NewRecordForm onSubmitExtra={closeModal} />
       ),
       onClose: () => { mutate() }
     })
     return null
   }
+
   const handleGenerateReport = () => {
     console.log('Generating report...')
   }
@@ -61,20 +67,32 @@ const MainViewPage = () => {
       )
     }
 
-    return data.map((row) => (
-      <TableRow>
-        <TableCell>{row.date}</TableCell>
-        <TableCell>{row.manager}</TableCell>
-        <TableCell>{row.wmu}</TableCell>
-        <TableCell>{row.project}</TableCell>
-        <TableCell>{row.task}</TableCell>
-        <TableCell>{row.time}</TableCell>
-        <TableCell>{row.time_charge}</TableCell>
-        <TableCell>{row.mileage}</TableCell>
-        <TableCell>{row.mileage_chargable}</TableCell>
-        <TableCell>{row.description}</TableCell>
-      </TableRow>
-    ))
+    return data.map((row) => {
+      let mileageCell = <TableCell>{row.mileage}</TableCell>
+
+      if (row.mileage_chargable) {
+        mileageCell = (
+          <TableCell>
+            {row.mileage} <Badge color='red'>£ chargable</Badge>
+
+          </TableCell>
+        )
+      }
+      return (
+        <TableRow key={row.id}>
+          <TableCell>{row.date}</TableCell>
+          <TableCell>{row.manager}</TableCell>
+          <TableCell>{row.wmu}</TableCell>
+          <TableCell>{row.project}</TableCell>
+          <TableCell>{row.task}</TableCell>
+          <TableCell>{row.time}</TableCell>
+          <TableCell>{row.time_charge}</TableCell>
+          {mileageCell}
+          <TableCell>{row.description}</TableCell>
+        </TableRow>
+      )
+    }
+    )
   }
 
   return (
@@ -98,10 +116,9 @@ const MainViewPage = () => {
               <TableHead>WMU</TableHead>
               <TableHead>Project</TableHead>
               <TableHead>Task</TableHead>
-              <TableHead>Time Charge</TableHead>
               <TableHead>Time</TableHead>
+              <TableHead>Time Charge</TableHead>
               <TableHead>Mileage</TableHead>
-              <TableHead>Mileage Chargable</TableHead>
               <TableHead>Description</TableHead>
             </TableRow>
           </TableHeader>
