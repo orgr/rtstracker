@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
-import { fetcher } from '../utils/utils'
+import { fetcher, notifyError } from '../utils/utils'
 import Button from '../components/ui/Button'
 import NewRecordForm from '../components/NewRecordForm'
 import { modals } from '@mantine/modals'
@@ -11,14 +11,18 @@ import useSWR from 'swr'
 const MainViewPage = () => {
   const { data, error, isLoading, mutate } = useSWR('api/records', fetcher, {
     onErrorRetry: (error, key, config, revalidate, { retryCount }) => {
+      console.log(error)
       if (retryCount >= 10) {
         return
       }
       setTimeout(() => revalidate({ retryCount }), 5000)
+    },
+    onError: (error, key) => {
+      notifyError(error)
     }
   })
 
-  const closeModal = () => {
+  const closeAllModals = () => {
     modals.closeAll()
   }
 
@@ -26,7 +30,7 @@ const MainViewPage = () => {
     modals.open({
       title: 'New Record',
       children: (
-        <NewRecordForm onSubmitExtra={closeModal} />
+        <NewRecordForm onSubmitExtra={closeAllModals} />
       ),
       onClose: () => { mutate() }
     })

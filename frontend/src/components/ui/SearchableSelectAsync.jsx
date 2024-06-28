@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
 import { notifyError } from '../../utils/utils'
 import { Combobox, InputBase, Loader, useCombobox } from '@mantine/core'
 
-const getAsyncData = async (url) => {
-  return await axios.get(url).then((response) => response.data)
-}
-
-const SearchableSelectAsync = ({ dataSource, onChange, value, defaultValue, ...props }) => {
+const SearchableSelectAsync = ({ dataSource, onChange, value, defaultValue, onCreateNewItem, renderOption, ...props }) => {
   const [search, setSearch] = useState(defaultValue || '')
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
@@ -16,7 +11,7 @@ const SearchableSelectAsync = ({ dataSource, onChange, value, defaultValue, ...p
     onDropdownOpen: () => {
       if (data.length === 0 && !loading) {
         setLoading(true)
-        getAsyncData(dataSource).then((response) => {
+        dataSource().then((response) => {
           setData(response)
           setLoading(false)
           combobox.resetSelectedOption()
@@ -31,23 +26,32 @@ const SearchableSelectAsync = ({ dataSource, onChange, value, defaultValue, ...p
     }
   }, [value])
 
-  const exactOptionMatch = data.some((item) => item === search)
+  const getRenderedVal = (item) => renderOption ? renderOption(item) : item
+
+  const exactOptionMatch = data.some((item) => getRenderedVal(item) === search)
+
   const filteredOptions = exactOptionMatch
     ? data
-    : data.filter((item) => item.toLowerCase().includes(search.toLowerCase().trim()))
+    : data.filter((item) => getRenderedVal(item).toLowerCase().includes(search.toLowerCase().trim()))
 
-  const options = filteredOptions.map((item) => (
-    <Combobox.Option value={item} key={item}>
-      {item}
-    </Combobox.Option>
-  ))
+  const options = filteredOptions.map((item) => {
+    const presentableVal = getRenderedVal(item)
+    return (
+      <Combobox.Option value={item} key={presentableVal}>
+        {presentableVal}
+      </Combobox.Option>
+    )
+  })
 
   const handleOptionSubmit = (val) => {
     if (val === '$create') {
       onChange(search)
+      if (onCreateNewItem) {
+        onCreateNewItem(search)
+      }
     } else {
       onChange(val)
-      setSearch(val)
+      setSearch(getRenderedVal(val))
     }
     combobox.closeDropdown()
   }
@@ -85,7 +89,7 @@ const SearchableSelectAsync = ({ dataSource, onChange, value, defaultValue, ...p
         <Combobox.Options>
           {loading ? <Combobox.Empty>Loading....</Combobox.Empty> : options}
           {!exactOptionMatch && search && (
-            <Combobox.Option value='$create'>+ Create {search}</Combobox.Option>
+            <Combobox.Option value='$create'>+ New {props.label}: {search}</Combobox.Option>
           )}
         </Combobox.Options>
       </Combobox.Dropdown>

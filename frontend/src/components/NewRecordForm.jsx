@@ -1,11 +1,13 @@
 import Button from './ui/Button'
 import SearchableSelectAsync from './ui/SearchableSelectAsync'
-import { Autocomplete, Checkbox, NumberInput, Group, Textarea, Select } from '@mantine/core'
+import { Checkbox, NumberInput, Group, Textarea, Select } from '@mantine/core'
 import { DatePickerInput } from '@mantine/dates'
 import { useForm } from '@mantine/form'
 import axios from 'axios'
 import { useAuth } from '../contexts/AuthContext'
+import { modals } from '@mantine/modals'
 
+import NewWmuForm from './NewWmuForm'
 import { notifyError } from '../utils/utils'
 
 const NewRecordForm = ({ className, children, ...props }) => {
@@ -41,7 +43,7 @@ const NewRecordForm = ({ className, children, ...props }) => {
     await axios.post('api/records', {
       user_pid: currentUser,
       // TODO: remove hardcoded value
-      wmu_id: 1,
+      wmu_id: values.wmu.id,
       // clean the time from the datetime value
       date: values.date.toJSON().split('T')[0],
       project: values.project,
@@ -60,6 +62,27 @@ const NewRecordForm = ({ className, children, ...props }) => {
     }
   }
 
+  const handleOnCreateWmu = (value) => {
+    const initialValues = { name: value }
+    const modalId = 'new_wmu_modal'
+    modals.open({
+      modalId,
+      title: 'New WMU',
+      children: (
+        <NewWmuForm initialValues={initialValues} onSubmitExtra={() => { modals.close(modalId) }} />
+      )
+    })
+  }
+
+  const getWmus = async () => {
+    return await axios.get('api/wmus').then((response) => response.data.map((item) => item))
+  }
+  const renderWmuOption = (option) => (
+    option.name
+  )
+  const getProjects = async () => {
+    return await axios.get('api/records/projects').then((response) => response.data)
+  }
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <DatePickerInput
@@ -71,12 +94,15 @@ const NewRecordForm = ({ className, children, ...props }) => {
         {...form.getInputProps('date')}
       />
 
-      <Autocomplete
+      <SearchableSelectAsync
         withAsterisk
         mt='md'
         label='WMU'
         placeholder=''
-        data={['React', 'Angular', 'Vue', 'Svelte']}
+        dataSource={getWmus}
+        optionName='WMU'
+        onCreateNewItem={handleOnCreateWmu}
+        renderOption={renderWmuOption}
         key={form.key('wmu')}
         {...form.getInputProps('wmu')}
       />
@@ -86,17 +112,17 @@ const NewRecordForm = ({ className, children, ...props }) => {
         mt='md'
         label='Project'
         placeholder=''
-        dataSource='api/records/projects'
+        dataSource={getProjects}
         key={form.key('project')}
         {...form.getInputProps('project')}
       />
 
-      <SearchableSelectAsync
+      <Select
         withAsterisk
         mt='md'
         label='Task'
         placeholder=''
-        dataSource='api/records/tasks'
+        data={['Task 1', 'Task 2', 'TODO: make a tasks table and fetch from there']}
         key={form.key('task')}
         {...form.getInputProps('task')}
       />

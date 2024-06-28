@@ -15,6 +15,7 @@ pub struct Params {
 
 impl Params {
     fn update(&self, item: &mut ActiveModel) {
+        item.name = Set(self.name.clone());
         item.description = Set(self.description.clone());
     }
 }

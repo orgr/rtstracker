@@ -62,7 +62,7 @@ pub async fn list(_auth: auth::JWT, State(ctx): State<AppContext>) -> Result<Res
             RecordResponse {
                 id: raw_record.id,
                 manager: user.name.clone(),
-                wmu: wmu.id.to_string(),
+                wmu: wmu.name.clone(),
                 date: raw_record.date,
                 project: raw_record.project.clone(),
                 task: raw_record.task.clone(),

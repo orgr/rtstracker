@@ -12,6 +12,7 @@ pub struct Model {
     pub id: i32,
     #[sea_orm(column_type = "Text", nullable)]
     pub description: Option<String>,
+    pub name: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
