@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { fetcher, notifyError } from '../utils/utils'
@@ -7,6 +8,7 @@ import { modals } from '@mantine/modals'
 import { Badge } from '@mantine/core'
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '../components/ui/Table'
 import useSWR from 'swr'
+import axios from 'axios'
 
 const MainViewPage = () => {
   const { data, error, isLoading, mutate } = useSWR('api/records', fetcher, {
@@ -21,6 +23,12 @@ const MainViewPage = () => {
       notifyError(error)
     }
   })
+
+  const [userName, setUserName] = useState('')
+
+  useEffect(() => {
+    axios.get('api/user/current').then((response) => { setUserName(response.data.name) })
+  }, [])
 
   const closeAllModals = () => {
     modals.closeAll()
@@ -103,7 +111,7 @@ const MainViewPage = () => {
     <div className='flex flex-col h-screen mt-16'>
       <header className='bg-gray-100 dark:bg-gray-800 py-4 px-6'>
         <div className='flex justify-between items-center'>
-          <h1 className='text-2xl font-bold'>Data Table</h1>
+          <h1 className='text-2xl font-bold'>Hi {userName}</h1>
           <div className='flex gap-4'>
             <Button onClick={handleAddRow}>New Record</Button>
             <Button onClick={handleGenerateReport}>Generate Report</Button>
