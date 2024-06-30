@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { forwardRef } from 'react'
 import { Button as MantineButton } from '@mantine/core'
-const Button = ({ className, children, ...props }) => {
+
+const Button = forwardRef(({ className, children, ...props }, ref) => {
   return (
-    <MantineButton className={`btn ${className}`} {...props}>
+    <MantineButton ref={ref} className={`btn ${className}`} {...props}>
       {children}
     </MantineButton>
   )
-}
+})
 
 export default Button
