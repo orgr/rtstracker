@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react'
 import Button from './ui/Button'
 import SearchableSelectAsync from './ui/SearchableSelectAsync'
 import { Checkbox, NumberInput, Group, Textarea, Select } from '@mantine/core'
@@ -10,7 +11,7 @@ import { modals } from '@mantine/modals'
 import NewWmuForm from './NewWmuForm'
 import { notifyError } from '../utils/utils'
 
-const NewRecordForm = ({ className, children, ...props }) => {
+const NewRecordForm = ({ className, tasks, children, ...props }) => {
   const form = useForm({
     mode: 'uncontrolled',
 
@@ -38,6 +39,9 @@ const NewRecordForm = ({ className, children, ...props }) => {
   })
 
   const { currentUser } = useAuth()
+
+  const [wmus, setWmus] = useState([])
+  const [projects, setProjects] = useState([])
 
   const handleSubmit = async (values) => {
     await axios.post('api/records', {
@@ -83,6 +87,12 @@ const NewRecordForm = ({ className, children, ...props }) => {
   const getProjects = async () => {
     return await axios.get('api/records/projects').then((response) => response.data)
   }
+
+  useEffect(() => {
+    getWmus().then((data) => setWmus(data))
+    getProjects().then((data) => setProjects(data))
+  }, [wmus, projects])
+
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <DatePickerInput
@@ -99,8 +109,7 @@ const NewRecordForm = ({ className, children, ...props }) => {
         mt='md'
         label='WMU'
         placeholder=''
-        dataSource={getWmus}
-        optionName='WMU'
+        data={wmus}
         onCreateNewItem={handleOnCreateWmu}
         renderOption={renderWmuOption}
         key={form.key('wmu')}
@@ -112,7 +121,7 @@ const NewRecordForm = ({ className, children, ...props }) => {
         mt='md'
         label='Project'
         placeholder=''
-        dataSource={getProjects}
+        data={projects}
         key={form.key('project')}
         {...form.getInputProps('project')}
       />

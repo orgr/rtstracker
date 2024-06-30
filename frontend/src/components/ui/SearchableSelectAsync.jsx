@@ -1,23 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { notifyError } from '../../utils/utils'
-import { Combobox, InputBase, Loader, useCombobox } from '@mantine/core'
+import { Combobox, InputBase, useCombobox } from '@mantine/core'
 
-const SearchableSelectAsync = ({ dataSource, onChange, value, defaultValue, onCreateNewItem, renderOption, ...props }) => {
+const SearchableSelectAsync = ({ data, onChange, value, defaultValue, onCreateNewItem, renderOption, ...props }) => {
   const [search, setSearch] = useState(defaultValue || '')
-  const [loading, setLoading] = useState(false)
-  const [data, setData] = useState([])
 
   const combobox = useCombobox({
-    onDropdownOpen: () => {
-      if (data.length === 0 && !loading) {
-        setLoading(true)
-        dataSource().then((response) => {
-          setData(response)
-          setLoading(false)
-          combobox.resetSelectedOption()
-        }).catch((error) => notifyError(error))
-      }
-    }
+    onDropdownOpen: () => { }
   })
 
   useEffect(() => {
@@ -74,7 +62,7 @@ const SearchableSelectAsync = ({ dataSource, onChange, value, defaultValue, onCr
       <Combobox.Target>
         <InputBase
           value={search}
-          rightSection={loading ? <Loader size={18} /> : <Combobox.Chevron />}
+          rightSection={<Combobox.Chevron />}
           rightSectionPointerEvents='none'
           placeholder='Search value'
           onClick={() => combobox.toggleDropdown()}
@@ -87,7 +75,7 @@ const SearchableSelectAsync = ({ dataSource, onChange, value, defaultValue, onCr
       </Combobox.Target>
       <Combobox.Dropdown>
         <Combobox.Options>
-          {loading ? <Combobox.Empty>Loading....</Combobox.Empty> : options}
+          {options}
           {!exactOptionMatch && search && (
             <Combobox.Option value='$create'>+ New {props.label}: {search}</Combobox.Option>
           )}
