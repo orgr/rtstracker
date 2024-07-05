@@ -1,18 +1,17 @@
 #![allow(clippy::missing_errors_doc)]
 #![allow(clippy::unnecessary_struct_initialization)]
 #![allow(clippy::unused_async)]
-use axum::debug_handler;
-use chrono::NaiveDate;
-use loco_rs::prelude::*;
-use sea_orm::LoaderTrait;
-use sea_orm::QuerySelect;
-use serde::{Deserialize, Serialize};
-
 use crate::models::_entities::records::{ActiveModel, Column, Entity, Model};
+use crate::models::_entities::sea_orm_active_enums::{Task, TimeCharge};
 use crate::models::_entities::users;
 use crate::models::_entities::wmus;
 use crate::models::records::AddWithUserPidParams;
 use crate::views::record::{ListResponse, RecordResponse};
+use axum::debug_handler;
+use chrono::NaiveDate;
+use loco_rs::prelude::*;
+use sea_orm::{ActiveEnum, LoaderTrait, QuerySelect};
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Params {
@@ -24,18 +23,20 @@ pub struct Params {
     pub time_charge: String,
     pub description: Option<String>,
     pub time: i32,
-    pub mileage: i32,
+    pub mileage: Option<i32>,
     pub mileage_chargable: bool,
 }
 
 impl Params {
     fn update(&self, item: &mut ActiveModel) {
+        let task = Task::try_from_value(&self.task).unwrap();
+        let time_charge = TimeCharge::try_from_value(&self.time_charge).unwrap();
         item.user_id = Set(self.user_id);
         item.wmu_id = Set(self.wmu_id);
         item.date = Set(self.date);
         item.project = Set(self.project.clone());
-        item.task = Set(self.task.clone());
-        item.time_charge = Set(self.time_charge.clone());
+        item.task = Set(task);
+        item.time_charge = Set(time_charge);
         item.description = Set(self.description.clone());
         item.time = Set(self.time);
         item.mileage = Set(self.mileage);
@@ -65,8 +66,8 @@ pub async fn list(_auth: auth::JWT, State(ctx): State<AppContext>) -> Result<Res
                 wmu: wmu.name.clone(),
                 date: raw_record.date,
                 project: raw_record.project.clone(),
-                task: raw_record.task.clone(),
-                time_charge: raw_record.time_charge.to_string(),
+                task: raw_record.task.to_value(),
+                time_charge: raw_record.time_charge.to_value(),
                 description: raw_record.description.as_ref().unwrap().to_string(),
                 time: raw_record.time,
                 mileage: raw_record.mileage,

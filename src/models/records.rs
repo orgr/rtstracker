@@ -13,7 +13,7 @@ pub struct AddWithUserPidParams {
     pub time_charge: String,
     pub description: Option<String>,
     pub time: i32,
-    pub mileage: i32,
+    pub mileage: Option<i32>,
     pub mileage_chargable: bool,
 }
 
